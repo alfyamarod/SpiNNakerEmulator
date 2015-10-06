@@ -1,0 +1,3 @@
+This emu folder has the files which replicate the functionality of the API 
+(and targeting ARM and SpiNNaker hardware), and make it work in some
+fashion on a standard PC-type workstation.
