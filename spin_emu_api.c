@@ -16,9 +16,36 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include "spin_emu.h"
-#include "spin1_api_params.h"
+//#include "spin1_api_params.h"
 #include "scamp_emu.h"
 #include "dma.h"
+
+// ------------------------------------------------------------------------
+// helpful macros
+// ------------------------------------------------------------------------
+//! \brief The address of a chip
+//! \param[in] x: X coordinate of the chip
+//! \param[in] y: Y coordinate of the chip
+//! \return The packed chip coordinates
+#define CHIP_ADDR(x, y)      ((x << 8) | y)
+//! \brief A peer-to-peer route
+//! \param[in] addr: The address of the chip
+//! \return The route bit to that chip
+#define P2P_ROUTE(addr)      (1 << p2p_get(addr))
+//! \brief The route to a core on the current chip
+//! \param[in] core: The core to route to
+//! \return The route bit to that core
+#define CORE_ROUTE(core)     (1 << (core + NUM_LINKS))
+
+
+
+uint spin1_send_mc_packet(uint key, uint data, uint load);
+
+uint spin1_send_sdp_msg (sdp_msg_t *msg, uint timeout);
+
+uint  spin1_get_core_id(void);
+
+uint  spin1_get_chip_id(void);
 
 
 struct qevent

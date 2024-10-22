@@ -1,0 +1,46 @@
+
+
+
+* How does the emulator work
+
+** spin_emu_main.c
+Entry point of the emulator, we read a config file
+
+It calls spin_emu_dispatcher
+
+*** spin_emu_dispatcher(2, x, y)
+
+x and y are read from config file and are the number of chips ? 
+
+"spin_emu_dispatcher() listens to ybug command packets and routes packets
+between core processes"
+
+First these two are called:
+bind_ethernet_channel() -> creates a scoket to receive commands
+
+This creates and end point for receiving and sendign data in a computer network 
+
+**** TODO search more on this socket thing 
+
+
+iptag_init () -> steup IP tags 
+**** TODO check IP protocol
+
+
+then *cmd_p2pc* is called which starts the number of CPUs(chips) to emulate.
+This also initialize the routing table spin_emu_routes.
+
+
+main loop while(1){ ... } ->
+
+at each iteration in the loop we have multiple file descriptors in fd_set fds
+
+FD_ZERO(&fds) clears the set (what does that mean?)
+
+FD_SET(spin_emu_ether_fd, &fds) add file descriptor spin_emu_ether_fd to set 
+
+a file descriptor is just a unique identifier (a number) for a file or I/O resource
+
+If FD_ISSET(...) then we receive messages from ethernet
+
+receive_msg_from_ether() -> 

@@ -3,8 +3,9 @@
 #include <string.h>
 
 #include "spin_emu.h"
-#include "spin1_api.h"
-#include "spinn_io.h"
+//#include "spin1_api.h"
+//#include "spinn_io.h"
+
 
 /* UNIMPLEMENTED
 void io_put_char (char *stream, uint c);

@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 #include "spin_emu.h"
-#include "spin1_api.h"
+//#include "spin1_api.h"
 #include "scamp_emu.h"
 
 uint cmd_write(sdp_msg_t *msg)

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		c = lcfg_new("../default.cfg");
+		c = lcfg_new("./default.cfg");
 		printf("Loading config: default.cfg\n");
 	}
 

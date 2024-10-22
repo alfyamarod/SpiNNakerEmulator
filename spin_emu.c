@@ -26,7 +26,7 @@ int spin_emu_ether_fd;
 int spin_emu_chip;
 int spin_emu_core;
 
-int SLOW_DOWN_TIMER;
+extern int SLOW_DOWN_TIMER;
 
 int **spin_emu_child_pid;
 
@@ -37,9 +37,9 @@ void *spin_emu_dtcm_freeptr = (void*) DTCM_BASE;
 uint virt_cpu;
 
 int debug_mc_dispatch = 0;
-int debug_sdp_dispatch = 0;
+int debug_sdp_dispatch = 1;
 int debug_events = 0;
-int debug_startup = 0;
+int debug_startup = 1;
 int debug_exec = 0;
 
 
@@ -188,8 +188,10 @@ static void run_core(int chip, int core)
 
 /**
  * Runs each "core" as a simple process which listens for SDP messages
- * NOTE: each forked process may be replaced at a later time following an AS message (see scamp_emu.c)
+ * NOTE: each forked process may be replaced at a later time following an AS
+ * message (see scamp_emu.c)
  */
+
 void spin_emu_spawn_cores()
 {
 	int c, i;

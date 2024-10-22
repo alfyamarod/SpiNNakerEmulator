@@ -48,7 +48,7 @@ sdp_msg_t ***sdp_queue_tail;
 char spin_emu_tmpdir_template[] = "/tmp/spin_emu.XXXXXX";
 
 static int mc_pending;
-int initalised = 0;
+int initialised = 0;
 uint floodfill; // memory address where floodfill starts putting data (Important: this means only one flood fill at a time)
 
 iptag_t iptags[TAG_TABLE_SIZE];
@@ -504,10 +504,10 @@ static int cmd_iptag(sdp_msg_t *msg)
  */
 void cmd_p2pc(int x, int y) {
 
-	if(initalised == 0)
+	if(initialised == 0)
 	{
 		// Initialise first because the process can take a while
-		initalised = 1;
+		initialised = 1;
 
 		NUM_CHIPS_X = x;
 		NUM_CHIPS_Y = y;
@@ -785,18 +785,21 @@ static void process_message(sdp_msg_t *msg)
 				flood_as(msg);
 			}
 			break;
+			/*
 		case CMD_P2PC:
 			x = ((htonl(msg->arg2)) & 0x000000ff);
 			y = ((htonl(msg->arg2) >> 8) & 0x000000ff);
 			if (debug_sdp_dispatch > 1) {
 				fprintf(stderr, "Received P2PC command x=%d y=%d\n", x, y);
 			}
-			// If not initalised, creates the cores, memory maps needed, and the sockets
-			if(initalised == 0) {
+			// If not initialised, creates the cores, memory maps needed, and the sockets
+			if(initialised == 0) {
 				cmd_p2pc(x, y);
 				printf("*** P2PC complete and cores now active ***\n");
 			}
 			break;
+			*/
+			
 			/*
 		case CMD_PING:
 			if (debug_sdp_dispatch > 1)
@@ -1038,7 +1041,7 @@ void spin_emu_dispatcher(int num, ...)
 			receive_msg_from_ether();
 		}
 
-		if(initalised == 1)
+		if(initialised == 1)
 		{
 			// Cores have been created, dispatch messages for them.
 			for (c = 0; c < NUM_CHIPS; c++)
