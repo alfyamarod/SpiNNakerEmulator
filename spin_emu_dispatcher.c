@@ -785,7 +785,6 @@ static void process_message(sdp_msg_t *msg)
 				flood_as(msg);
 			}
 			break;
-			/*
 		case CMD_P2PC:
 			x = ((htonl(msg->arg2)) & 0x000000ff);
 			y = ((htonl(msg->arg2) >> 8) & 0x000000ff);
@@ -798,7 +797,6 @@ static void process_message(sdp_msg_t *msg)
 				printf("*** P2PC complete and cores now active ***\n");
 			}
 			break;
-			*/
 			
 			/*
 		case CMD_PING:

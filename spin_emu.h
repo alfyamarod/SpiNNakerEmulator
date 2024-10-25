@@ -435,6 +435,8 @@ enum sark_scp_command_codes {
     CMD_INFO = 31,              //!< Get chip/core info
     CMD_SYNC = 32,              //!< Control sending of synchronization msgs
 
+    CMD_P2PC = 33,              // Just for simulator, no bmp
+    
     // 48-63 reserved for BMP
 
     CMD_TUBE = 64               //!< Tube output

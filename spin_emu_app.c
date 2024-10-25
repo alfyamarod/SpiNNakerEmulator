@@ -27,9 +27,16 @@ static void dummy_usr1_handler(int sig)
 {
 }
 
+void c_main(void) {
+    // Actual logic that runs in the core
+}
+
+
+
 int main (int argc, char *argv[])
 {
-
+    // The core running the app is just a subprocess
+    // so getpid() gets called
 	sigset_t blocked;
 	struct sigaction sa;
 	setpriority(PRIO_PROCESS, getpid(), 10);

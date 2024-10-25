@@ -1,4 +1,10 @@
 
+* TODO [/]
++ [ ] How to load app to core
++ [ ] How does the api work?
++ [ ] Minimum example
+
+
 
 
 * How does the emulator work
@@ -30,6 +36,12 @@ iptag_init () -> steup IP tags
 then *cmd_p2pc* is called which starts the number of CPUs(chips) to emulate.
 This also initialize the routing table spin_emu_routes.
 
+*** Cores as processes 
+To simulate cores on chips we just use fork() to spawn a child process,
+the process will have a copy of the ehternet socket so it will wait for SDP messages
+
+TODO I have to check how this is done in terms of the memory for each core! 
+
 
 main loop while(1){ ... } ->
 
@@ -43,4 +55,25 @@ a file descriptor is just a unique identifier (a number) for a file or I/O resou
 
 If FD_ISSET(...) then we receive messages from ethernet
 
-receive_msg_from_ether() -> 
+receive_msg_from_ether() -> For each core "subprocess" this will read the SDP messages
+
+***** Testing the dispatcher
+
+To test how the messages are received we need to create a client,
+in SpiNNaker this is usually ybug, but here we create the SDP message manually
+
+
+
+** spin_emu_api.c
+
+
+** spin_emu_app.c
+
+Simulates the app running in the core.
+on spin_emu_dispacther()/cmd_p2pc()/spin_emu_spawn_cores() the cores were created as subprocess
+
+
+
+** scamp_emu.c
+
+Simulates the control and monitor for the SpiNNaker.  

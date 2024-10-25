@@ -62,9 +62,7 @@ struct
 	callback_t cback; 
 	struct qevent *queue;
 	struct qevent *queue_tail;
-}
-
-evinfo[NUM_EVENTS];  
+}evinfo[NUM_EVENTS];  
 
 
 uint spin_emu_sim_time;

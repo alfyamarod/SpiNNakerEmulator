@@ -39,7 +39,7 @@ uint virt_cpu;
 int debug_mc_dispatch = 0;
 int debug_sdp_dispatch = 1;
 int debug_events = 0;
-int debug_startup = 1;
+int debug_startup = 0;
 int debug_exec = 0;
 
 
