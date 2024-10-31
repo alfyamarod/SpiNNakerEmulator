@@ -572,6 +572,102 @@ typedef struct {
 } task_queue_t;
 
 
+
+// ------------------------------------------------------------------------
+// helpful macros
+// ------------------------------------------------------------------------
+//! \brief The address of a chip
+//! \param[in] x: X coordinate of the chip
+//! \param[in] y: Y coordinate of the chip
+//! \return The packed chip coordinates
+#define CHIP_ADDR(x, y)      ((x << 8) | y)
+//! \brief A peer-to-peer route
+//! \param[in] addr: The address of the chip
+//! \return The route bit to that chip
+#define P2P_ROUTE(addr)      (1 << p2p_get(addr))
+//! \brief The route to a core on the current chip
+//! \param[in] core: The core to route to
+//! \return The route bit to that core
+#define CORE_ROUTE(core)     (1 << (core + NUM_LINKS))
+
+
+
+extern uint spin1_send_mc_packet(uint key, uint data, uint load);
+
+extern uint spin1_send_sdp_msg (sdp_msg_t *msg, uint timeout);
+
+extern uint  spin1_get_core_id(void);
+
+extern uint  spin1_get_chip_id(void);
+
+// ---------------------
+/* rts initialization */
+// ---------------------
+extern void rts_init (void);
+extern void rts_cleanup (void);
+// ---------------------
+
+
+extern uint spin1_start(void);
+extern void spin1_stop(void);
+extern void spin1_kill(uint error);
+extern void spin1_set_timer_tick(uint time);
+
+extern void spin1_set_core_map(uint chips, uint * core_map);
+extern uint spin1_get_simulation_time(void);
+
+extern void spin1_delay_us (uint n);
+
+
+extern uint p2p_get (uint entry);
+
+extern void spin1_callback_on(uint event_id, callback_t cback, int priority);
+extern void spin1_callback_off(uint event_id);
+
+extern uint spin1_schedule_callback(callback_t cback, uint arg0, uint arg1, uint priority);
+
+extern uint spin1_trigger_user_event(uint arg0, uint arg1);
+extern uint spin1_dma_transfer(uint tag, void *system_address, void *tcm_address,
+			       uint direction, uint length);
+
+extern void spin1_memcpy(void *dst, void const *src, uint len);
+
+extern uint spin1_send_mc_packet(uint key, uint data, uint load);
+
+extern void spin1_flush_rx_packet_queue(void);
+
+extern void spin1_flush_tx_packet_queue(void);
+
+extern void spin1_msg_free (sdp_msg_t *msg);
+
+extern sdp_msg_t* spin1_msg_get (void);
+
+extern uint spin1_send_sdp_msg (sdp_msg_t *msg, uint timeout);
+
+extern uint spin1_irq_disable(void);
+
+extern uint spin1_fiq_disable(void);
+
+extern uint spin1_fiq_disable(void);
+
+extern uint spin1_int_disable(void);
+
+extern void spin1_mode_restore(uint sr);
+
+extern uint  spin1_get_id(void);
+
+extern uint  spin1_get_core_id(void);
+
+extern uint  spin1_get_chip_id(void);
+
+extern uchar spin1_get_leds(void);
+
+extern void  spin1_set_leds(uchar leds);
+
+extern uint spin1_set_mc_table_entry(uint entry, uint key, uint mask, uint route);
+
+extern void* spin1_malloc(uint bytes);
+
 // ----------------
 /* data transfer */
 // ----------------
@@ -619,7 +715,7 @@ extern int NUM_CHIPS;
 #define NUM_ROUTES 1024
 
 // NOTE: ybug, the visualiser, and this emulator might be on the same machine
-#define SPIN_EMU_PORT 17893
+#define SPIN_EMU_PORT 17894
 
 //for simulations that require 1 millisecond ticks, slow the emulation by config variable
 extern int SLOW_DOWN_TIMER;
@@ -680,12 +776,12 @@ extern pthread_t spin_emu_controller_thread;
 extern pthread_t spin_emu_worker_thread;
 
 void bind_ethernet_channel();
-void spin_emu_controller();
-void spin_emu_send_rr_ping(int chip, int core);
-void spin_emu_send_mc(int fd, struct spin_emu_mc_t *mc);
-void spin_emu_send_route(int fd, uint entry, uint key, uint mark, uint route);
-void spin_emu_die(const char *msg, ...);
-void spin_emu_die_errno(const char *msg, ...);
+extern void *spin_emu_controller(void *arg);
+extern void spin_emu_send_rr_ping(int chip, int core);
+extern void spin_emu_send_mc(int fd, struct spin_emu_mc_t *mc);
+extern void spin_emu_send_route(int fd, uint entry, uint key, uint mark, uint route);
+extern void spin_emu_die(const char *msg, ...);
+extern void spin_emu_die_errno(const char *msg, ...);
 #define die spin_emu_die
 #define die_errno spin_emu_die_errno
 void *xmalloc(size_t len);

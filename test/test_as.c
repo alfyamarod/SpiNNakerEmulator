@@ -15,7 +15,31 @@ int main() {
     const char *server_ip = "127.0.0.1";
 
     // create sdp message
-    const char *message = "Hello, server!";
+    sdp_msg_t msg;
+
+    memset(&msg, 0, sizeof(msg));
+
+    msg.next = NULL; 
+    msg.checksum = 0xff;
+
+    msg.length = sizeof(msg);
+
+    msg.flags = 0x07;
+    msg.tag = 0;
+
+    msg.dest_port = 0;
+    msg.srce_port = 0;
+
+    // send to core x = 1, y = 1
+    msg.dest_addr = (0x01 << 4) | 0x01; 
+    msg.srce_addr = 0;
+
+    msg.cmd_rc = CMD_AS;
+    msg.seq = 0;
+    
+
+    strncpy((char *)msg.data, "sending data to emu", sizeof(msg.data) - 1);
+    
     
     // Prepare the hints structure
     memset(&hints, 0, sizeof hints);
@@ -47,7 +71,8 @@ int main() {
     }
 
     // Send the message to the server
-    int numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
+    
+    int numbytes = sendto(sockfd, &msg, sizeof(msg), 0, p->ai_addr, p->ai_addrlen);
     if (numbytes == -1) {
         perror("sendto");
         close(sockfd);
@@ -56,6 +81,7 @@ int main() {
     }
 
     printf("Sent %d bytes to %s:%d\n", numbytes, server_ip, SPIN_EMU_PORT);
+
 
     // Clean up
     close(sockfd);

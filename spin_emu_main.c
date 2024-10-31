@@ -7,9 +7,6 @@
 #include "spin_emu.h"
 
 
-int SLOW_DOWN_TIMER;
-
-
 /**
  * Simple main to kick off the emulator process
  * main looks for a config file supplied on the command line

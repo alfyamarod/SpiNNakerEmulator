@@ -16,36 +16,8 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include "spin_emu.h"
-//#include "spin1_api_params.h"
 #include "scamp_emu.h"
 #include "dma.h"
-
-// ------------------------------------------------------------------------
-// helpful macros
-// ------------------------------------------------------------------------
-//! \brief The address of a chip
-//! \param[in] x: X coordinate of the chip
-//! \param[in] y: Y coordinate of the chip
-//! \return The packed chip coordinates
-#define CHIP_ADDR(x, y)      ((x << 8) | y)
-//! \brief A peer-to-peer route
-//! \param[in] addr: The address of the chip
-//! \return The route bit to that chip
-#define P2P_ROUTE(addr)      (1 << p2p_get(addr))
-//! \brief The route to a core on the current chip
-//! \param[in] core: The core to route to
-//! \return The route bit to that core
-#define CORE_ROUTE(core)     (1 << (core + NUM_LINKS))
-
-
-
-uint spin1_send_mc_packet(uint key, uint data, uint load);
-
-uint spin1_send_sdp_msg (sdp_msg_t *msg, uint timeout);
-
-uint  spin1_get_core_id(void);
-
-uint  spin1_get_chip_id(void);
 
 
 struct qevent
@@ -113,11 +85,6 @@ volatile uchar user_pending = FALSE;
 uint user_arg0;
 uint user_arg1;
 
-// ---------------------
-/* rts initialization */
-// ---------------------
-void rts_init (void);
-// ---------------------
 
 
 
@@ -355,7 +322,7 @@ static void read_packets()
 		fprintf(stderr, "recv() failed: %s\n", strerror(errno));
 }
 
-void spin_emu_controller()
+void* spin_emu_controller(void *arg)
 {
 	/*
 	sigset_t sigset;
@@ -379,8 +346,6 @@ void spin_emu_controller()
 	}
 }
 
-uint spin1_emu_quit;
-uint spin1_emu_retval;
 
 static void dummy_usr1_handler(int sig)
 {
@@ -389,6 +354,10 @@ static void dummy_usr1_handler(int sig)
 // ------------------------------------------------------------------------
 // simulation control functions
 // ------------------------------------------------------------------------
+
+uint spin1_emu_quit;
+uint spin1_emu_retval;
+
 uint spin1_start()
 {
 
@@ -646,7 +615,7 @@ uint p2p_get (uint entry)
 *
 * SOURCE
 */
-void barrier_setup (uint chips, uint * core_map)
+static void barrier_setup (uint chips, uint * core_map)
 {
 
   uint i;
@@ -795,7 +764,7 @@ void barrier_setup (uint chips, uint * core_map)
 * SOURCE
 *
 */
-void barrier_wait (void)
+static void barrier_wait (void)
 {
 	// TODO: A clear refactor here is to clean up the `(clock() / (CLOCKS_PER_SEC / 1000))` used everywhere
 	clock_t starttime = clock() / (CLOCKS_PER_SEC / 1000);
@@ -921,7 +890,8 @@ uint spin1_trigger_user_event(uint arg0, uint arg1)
 // ------------------------------------------------------------------------
 //  data transfer functions
 // ------------------------------------------------------------------------
-uint spin1_dma_transfer(uint tag, void *system_address, void *tcm_address, uint direction, uint length)
+uint spin1_dma_transfer(uint tag, void *system_address, void *tcm_address,
+			uint direction, uint length)
 {
 
 	static uint dma_id = 0;

@@ -16,12 +16,6 @@
 pthread_t spin_emu_controller_thread;
 pthread_t spin_emu_worker_thread;
 
-int NUM_CHIPS_X;
-int NUM_CHIPS_Y;
-int NUM_CHIPS;
-int **spin_emu_socket_dispatch;
-int **spin_emu_socket_core;
-int SLOW_DOWN_TIMER;
 
 static void dummy_usr1_handler(int sig)
 {
@@ -29,16 +23,26 @@ static void dummy_usr1_handler(int sig)
 
 void c_main(void) {
     // Actual logic that runs in the core
+    printf("Hello from core %d", spin_emu_core);
 }
 
 
 
 int main (int argc, char *argv[])
 {
+
+    int NUM_CHIPS_X;
+    int NUM_CHIPS_Y;
+    int NUM_CHIPS;
+    int **spin_emu_socket_dispatch;
+    int **spin_emu_socket_core;
+    int SLOW_DOWN_TIMER;
+
     // The core running the app is just a subprocess
     // so getpid() gets called
 	sigset_t blocked;
 	struct sigaction sa;
+
 	setpriority(PRIO_PROCESS, getpid(), 10);
 	sa.sa_handler = dummy_usr1_handler;
 	sigemptyset(&sa.sa_mask);
@@ -61,13 +65,15 @@ int main (int argc, char *argv[])
 	spin_emu_tmpdir = argv[4];
 	SLOW_DOWN_TIMER = atoi(argv[5]);
 
+
+
 	if(debug_exec)
 		fprintf(stderr, "[%d,%d] starting, tempdir=%s\n", spin_emu_chip, spin_emu_core,spin_emu_tmpdir);
 
 	spin_emu_mmap_core_mem(spin_emu_chip, spin_emu_core);
 
 
-	pthread_create(&spin_emu_controller_thread, NULL,spin_emu_controller, NULL);
+	pthread_create(&spin_emu_controller_thread, NULL,&spin_emu_controller, NULL);
 	spin_emu_worker_thread = pthread_self();
 
 

@@ -610,6 +610,10 @@ void dispatch_as(sdp_msg_t *msg) {
 
 	x = msg->dest_addr >> 8;
 	y = msg->dest_addr & 0xff;
+
+
+	printf("chip reading %d, %d\n", x, y);
+
 	id = chip_id(x,y);
 
 	for (c = 0; c < NUM_CHIPS; c++) {

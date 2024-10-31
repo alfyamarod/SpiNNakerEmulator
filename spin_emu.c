@@ -26,7 +26,9 @@ int spin_emu_ether_fd;
 int spin_emu_chip;
 int spin_emu_core;
 
-extern int SLOW_DOWN_TIMER;
+
+int SLOW_DOWN_TIMER;
+
 
 int **spin_emu_child_pid;
 
@@ -88,6 +90,17 @@ void bind_ethernet_channel()
 	    	  fprintf(stderr, "socket\n");
 	         continue;
 	     }
+
+	     int reuse = 1;
+
+	     if (setsockopt(spin_emu_ether_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int))
+		 == -1) {
+		 fprintf(stderr, "setsockopt(SO_REUSEADDR) failed");
+		 close(spin_emu_ether_fd);
+		 continue;
+	     }
+
+	     
 	     if (bind(spin_emu_ether_fd, p->ai_addr, p->ai_addrlen) == -1) {
 	    	 close(spin_emu_ether_fd);
 	         fprintf(stderr, "socket could not bind\n");
@@ -181,7 +194,7 @@ static void run_core(int chip, int core)
 	spin_emu_mmap_core_mem(chip, core);
 
 	// Core listening for packets until an "as" command is received at which point this controller is killed and replaced by an application
-	spin_emu_controller();
+	spin_emu_controller(NULL);
 }
 
 
