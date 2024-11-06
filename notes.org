@@ -1,7 +1,7 @@
 
 * TODO [/]
 + [ ] How to load app to core
-+ [ ] How does the api work?
++ [ ] [[spin_emu_api.c][How does the api work?]]
 + [ ] Minimum example
 
 
@@ -65,6 +65,7 @@ in SpiNNaker this is usually ybug, but here we create the SDP message manually
 
 
 ** spin_emu_api.c
+
 
 
 ** spin_emu_app.c

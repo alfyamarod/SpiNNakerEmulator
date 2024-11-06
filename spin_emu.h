@@ -28,6 +28,8 @@
 #define FAILURE            (uint) 0
 
 typedef unsigned char uchar; 
+typedef unsigned int uint;
+typedef unsigned short int ushort;
 typedef uint64_t uint64;
 
 
@@ -227,6 +229,7 @@ It will be a minimum of 8 as the SDP header should always be present.
 #define SDP_BUF_SIZE    256     //!< SDP data buffer capacity
 #define BUF_SIZE SDP_BUF_SIZE
 
+#pragma pack(push, 1)
 typedef struct sdp_msg {        // SDP message - 292 bytes
     struct sdp_msg *next;       //!< Next in free list
     ushort length;              //!< length
@@ -256,7 +259,7 @@ typedef struct sdp_msg {        // SDP message - 292 bytes
     uint __PAD1;                //!< Private padding
 } sdp_msg_t;
 
-
+#pragma pack(pop)
 
 
 /*!
@@ -715,7 +718,7 @@ extern int NUM_CHIPS;
 #define NUM_ROUTES 1024
 
 // NOTE: ybug, the visualiser, and this emulator might be on the same machine
-#define SPIN_EMU_PORT 17894
+#define SPIN_EMU_PORT 17893
 
 //for simulations that require 1 millisecond ticks, slow the emulation by config variable
 extern int SLOW_DOWN_TIMER;

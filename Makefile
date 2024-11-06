@@ -3,7 +3,7 @@
 
 
 #CFLAGS = -Wall -I../scamp -I../spin1_api  -I./ 
-CFLAGS = -Wall -m32 -I./		 
+CFLAGS = -Wall -m32 -std=gnu11 -I./		 
 #CFLAGS = -Wall -I../spinnaker/spinnaker_tools/scamp -I../spinnaker/spinnaker_tools/spin1_api -I../spinnaker/spinnaker_tools/include  -I./ 
 LDFLAGS = -Wl,-Ttext-segment=0x30000000 -m32 -pthread
 # -Wl,-Ttext-segment=0x30000000 // puts the program code at a different address from 0x400000, should not collide with any SpiNNaker usage

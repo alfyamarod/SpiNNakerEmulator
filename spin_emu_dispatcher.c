@@ -705,11 +705,10 @@ static void process_message(sdp_msg_t *msg)
 
 	// get message command
 	ushort type = msg->cmd_rc;
+	printf("CMD rc %hu\n", type);
 	// variables to be used by the different commands, e.g. p2pc x y
 	uint x, y, cmd = 0;
 
-	if (debug_sdp_dispatch) // debug type
-		fprintf(stderr, "Received %d\n", type);
 
 	// TODO: Lots of message types are not yet supported
 	// See the wiki on how to add new packet types
@@ -939,6 +938,7 @@ static void receive_msg_from_ether()
 
 		if (debug_sdp_dispatch)
 		{
+		    fprintf(stderr, "len %d\n", len);
 			int i;
 			fprintf(stderr, "got ethernet sdp:");
 			for (i = 0; i < len; i++)
@@ -946,7 +946,10 @@ static void receive_msg_from_ether()
 			putc('\n', stderr);
 		}
 
+		
 		memcpy(&msg->flags, buf+2, len-2);
+
+		printf("msg->flags %d \n", msg->flags);
 		msg->length = len-2;
 
 
