@@ -48,16 +48,44 @@ int main() {
     msg.dest_addr = htons((1 << 8) | 1);
     msg.srce_addr = htons((1 << 8) | 1);
 
-    msg.cmd_rc = htons(10);
+    msg.cmd_rc = htons(CMD_AS);
 
     msg.seq = htons(0);
-    msg.arg1 = htonl(0);    
-    msg.arg2 = htonl(0);    
+    msg.arg1 = htonl(0xf5000000);
+    uint mask = (1 << 0) | (1 << 1);
+    msg.arg2 = htonl(mask);    
     msg.arg3 = htonl(0);    
 
 
-    strncpy((char *)msg.data, "Hello, SpiNNaker!", sizeof(msg.data) - 1);  // User data
+    const char *binary_filname = "../spin_emu_app";
 
+    FILE *file = fopen(binary_filname, "rb");
+
+    if(file == NULL) {
+	perror("Cant open file");
+	return 1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    rewind(file);
+
+    if (file_size > SDP_BUF_SIZE) {
+	fprintf(stderr, "file size to big\n");
+	fclose(file);
+	return 1;
+    }
+
+    size_t read_size = fread(msg.data, 1, file_size, file);
+    
+    // strncpy((char *)msg.data, "Hello, SpiNNaker!", sizeof(msg.data) - 1);
+
+    if(read_size != file_size) {
+	perror("Error reading app");
+	fclose(file);
+	return 1;
+    }
+    fclose(file);
     
     // Prepare the hints structure
     memset(&hints, 0, sizeof hints);

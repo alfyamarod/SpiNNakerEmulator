@@ -189,17 +189,21 @@ uint cmd_as (sdp_msg_t *msg)
 	strcat (executable, "/tempapp");
 	strcat (executable, foo);
 	strcat (executable, bar);
-	if(debug_exec)
+	if(debug_exec) {
 		fprintf(stderr, "temp app file=%s\n", executable);
+	}
 	FILE *fp;
 	remove(executable);
 	fp=fopen(executable, "a+");
 
+	
+	
 	//now where to copy data from?
 	if(msg->arg1 >= 0xf5000000)
 	{
 		// this as command is refering to the spiNNaker SYRAM location (might not be the same in the emulator)
 		msg->arg1 = msg->arg1 - (0xf5000000 - 0x1FFF8000);
+		
 	}
 	// else assume the starting address is in range
 	// Now we just need to figure out how much data to write to file
@@ -234,7 +238,12 @@ uint cmd_as (sdp_msg_t *msg)
 	snprintf(arg5, 12, "%d", SLOW_DOWN_TIMER);
 	char * const argv[7] = {arg0,arg1,arg2,arg3,arg4,arg5,NULL};
 
-	//fprintf(stderr, "[%d,%d] executing\n", spin_emu_chip, spin_emu_core);
+	
+	if(debug_exec) {
+	    fprintf(stderr, "Memory address for exec 0x%08x\n", ntohl(msg->arg1));
+	    fprintf(stderr, "[%d,%d] executing\n", spin_emu_chip, spin_emu_core);
+	}
+
 	execv(executable, argv);
 	die("[%d,%d] execv('%s') failed, cannot recover", spin_emu_chip, spin_emu_core,executable);
 	return 0;

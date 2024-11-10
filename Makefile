@@ -38,4 +38,4 @@ $(TEST_DIR)/%: $(TEST_DIR)/%.c $(TEST_OBJS)
 $(OBJS): spin_emu.h
 
 clean:
-	rm -rf spin_emu spin_emu_app.o $(OBJS) $(TEST_BINS)
+	rm -rf spin_emu spin_emu_app $(OBJS) $(TEST_BINS)

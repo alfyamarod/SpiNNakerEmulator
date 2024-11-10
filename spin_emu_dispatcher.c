@@ -13,7 +13,6 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <ctype.h>
 #include <stdarg.h>
 
 
@@ -240,8 +239,10 @@ static void flush_sdp_queues()
 				char buf[1+sizeof(sdp_msg_t)];
 				buf[0] = SPIN_EMU_PACKET_SDP;
 				memcpy(buf+1, msg, sizeof(sdp_msg_t));
-				if (send(spin_emu_socket_dispatch[c][i], buf, 1+sizeof(sdp_msg_t), MSG_DONTWAIT) < 0)
-					die_errno("send() failed in sdp flush\n");
+				if (send(spin_emu_socket_dispatch[c][i], buf, 1+sizeof(sdp_msg_t),
+					 MSG_DONTWAIT) < 0) {
+				    die_errno("send() failed in sdp flush\n");
+				}
 				prev = msg;
 				msg = msg->next;
 				free(prev);
@@ -605,16 +606,18 @@ void cmd_p2pc(int x, int y) {
  */
 void dispatch_as(sdp_msg_t *msg) {
 
-	uint mask = (int) msg->arg2;
+    uint mask = ntohl(msg->arg2);
 	int c,i,x,y,id;
 
 	x = msg->dest_addr >> 8;
 	y = msg->dest_addr & 0xff;
-
-
-	printf("chip reading %d, %d\n", x, y);
-
+	
 	id = chip_id(x,y);
+
+	
+	printf("chip reading %d, %d and id %d\n", x, y, id);
+
+	printf("NUM_CHIPS %d and NUM_CPUS %d\n", NUM_CHIPS, NUM_CPUS);
 
 	for (c = 0; c < NUM_CHIPS; c++) {
 		// only want to dispatch it to the CPU given in the message
@@ -626,7 +629,7 @@ void dispatch_as(sdp_msg_t *msg) {
 					sdp_msg_t *msgf = xzalloc(sizeof(sdp_msg_t));
 					memcpy(msgf, msg, sizeof(sdp_msg_t));
 					queue_sdp_xy(msgf, c, i);
-					//printf("Setting chip %d core %d running.\n",c,i);
+					printf("Setting chip %d core %d running.\n",c,i);
 					spin_emu_running[c][i] = 1;
 					spin_emu_running_count++;
 				}
@@ -704,7 +707,7 @@ static void process_message(sdp_msg_t *msg)
 	}
 
 	// get message command
-	ushort type = msg->cmd_rc;
+	ushort type = ntohs(msg->cmd_rc);
 	printf("CMD rc %hu\n", type);
 	// variables to be used by the different commands, e.g. p2pc x y
 	uint x, y, cmd = 0;
@@ -938,7 +941,7 @@ static void receive_msg_from_ether()
 
 		if (debug_sdp_dispatch)
 		{
-		    fprintf(stderr, "len %d\n", len);
+		    fprintf(stderr, "len %d\n",(int) len);
 			int i;
 			fprintf(stderr, "got ethernet sdp:");
 			for (i = 0; i < len; i++)
@@ -948,8 +951,6 @@ static void receive_msg_from_ether()
 
 		
 		memcpy(&msg->flags, buf+2, len-2);
-
-		printf("msg->flags %d \n", msg->flags);
 		msg->length = len-2;
 
 
